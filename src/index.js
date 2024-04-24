@@ -8,13 +8,12 @@ const address = `http://${hostname}:${port}/`;
 
 const server = http.createServer((req, res) => {
   const url = new URL(req.url, address);
-  console.log(url);
-  console.log(url.searchParams);
+
   for (const key of url.searchParams.keys()) {
     if ((key !== "hello") & (key !== "users")) {
       res.statusCode = 500;
-      res.setHeader("Content-Type", "application/json");
-      res.end("{}");
+      res.end();
+      return
     }
   }
   if (url.searchParams.has("hello")) {
@@ -22,11 +21,13 @@ const server = http.createServer((req, res) => {
     if (userName) {
       res.statusCode = 200;
       res.setHeader("Content-Type", "text/plain");
-      res.end(`Hello,  ${userName}!`);
+      res.end(`Hello, ${userName}!`);
+      return
     }
     res.statusCode = 400;
     res.setHeader("Content-Type", "text/plain");
     res.end(`Enter a name`);
+    return
   }
 
   if (url.searchParams.has("users")) {
@@ -34,11 +35,13 @@ const server = http.createServer((req, res) => {
     res.setHeader("Content-Type", "application/json");
     res.write(getUsers());
     res.end();
+    return
   }
 
-  res.statusCode = 200;
-  res.setHeader("Content-Type", "text/plain");
-  res.end("Hello World\n");
+    res.statusCode = 200;
+    res.setHeader("Content-Type", "text/plain");
+    res.end("Hello World\n");
+
 });
 
 server.listen(port, hostname, () => {
